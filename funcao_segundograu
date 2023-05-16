@@ -1,0 +1,118 @@
+let a = 1;
+let cSlider; 
+let bSlider;
+let texto;
+
+function setup() {
+  createCanvas(400, 400);
+  aS = createSlider(-1, 1, 0, 0.01);
+  cSlider = createSlider(-165, 165, 0, 0.01);
+  bSlider = createSlider(-155, 155, 0, 0.01);
+}
+
+function draw() {
+  background("white");
+  
+  //sliders
+  let c = cSlider.value();
+  let b = bSlider.value();
+  
+  //textos dos sliders
+  texto = createP("Largura");
+  texto.style("color", "#9C6FEB");
+  texto.position(45, 405);
+  texto = createP("Vertical");
+  texto.style("color", "#9C6FEB");
+  texto.position(175, 405);
+  texto = createP("Horizontal");
+  texto.style("color", "#9C6FEB");
+  texto.position(300, 405);
+
+  //calcula as coordenadas x e y da parábola com base no coeficiente a
+  strokeWeight(2);
+  stroke("purple")
+  beginShape();
+  for (let x = -200; x <= 200; x++) {
+    let y = aS.value() * (x - b) * (x - b) + c;
+    vertex(x + 200, 400 - y - 200);
+  }
+  endShape();
+  
+  //eixo das abscissas - x
+  strokeWeight(1);
+  stroke("black");
+  line(0, 200, 380, 200);
+  fill("black");
+  triangle(380, 193, 380, 207, 395, 200);
+  textSize(18);
+  text("x", 385, 220)
+  textSize(15);
+  
+  strokeWeight(0);
+  
+  let aumentarValorX = 0;
+  for(let i = -5; i < 6; i++) {
+    text(i, 35 + aumentarValorX, 225)
+      
+    if(i == 0) {
+          aumentarValorX += 45; 
+        }
+      
+    else{
+         aumentarValorX += 30;
+      }
+  }
+  strokeWeight(1);
+  
+  //x negativo
+  for(let xn = 165; xn >= 45; xn -= 30){
+    line(xn, 195, xn, 205);
+  } 
+  
+  //x positivo
+  for(let xp = 235; xp <= 355; xp += 30){
+    line(xp, 195, xp, 205);
+  }
+  
+
+  //eixo das ordenadas - y
+  line(200, 20, 200, 400);
+  triangle(193, 20, 207, 20, 200, 5);
+  textSize(18);
+  text("y", 215, 25);
+  
+  strokeWeight(0);
+  textSize(15);
+  
+  let aumentarValorY = 0;
+  for(let i = 5; i > -6; i--) {
+    
+    if(i == 0) {
+      aumentarValorY += 50; 
+      
+    } else if(i > 0) {
+        textSize(15);
+        text(i, 180 , 40 + aumentarValorY)
+        aumentarValorY += 30;
+        }
+        
+      else {
+        textSize(15);
+        text(i, 175 , 50 + aumentarValorY)
+        aumentarValorY += 30;
+      }
+        
+    }
+
+  strokeWeight(1);
+  
+  //y negativo
+  for(let yn = 245; yn <= 365; yn += 30){
+    line(195, yn, 205, yn);
+  }
+  //y positivo
+  for(let yp = 155; yp >= 35; yp -= 30){
+    line(195, yp, 205, yp);
+  }
+  fill("transparent");
+}
