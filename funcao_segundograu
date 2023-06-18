@@ -1,118 +1,281 @@
 let a = 1;
-let cSlider; 
+let cSlider;
 let bSlider;
-let texto;
+let cloudx = 100;
+let cloudy = 100;
+
+// posição horizontal inicial do foguete
+let xPos = -145;
+// velocidade horizontal do foguete
+let xVel = 2;
+// posição vertical inicial do foguete
+let yPos = 340;
+// velocidade vertical do foguete
+let yVel = -7;
+// gravidade que atua sobre o foguete
+let gravidade = 0.1;
+
+// controlar se o foguete terminou de executar
+let fogueteFinalizado = false;
+let explanation = false;
+
+let isDarkTheme = true;
 
 function setup() {
   createCanvas(400, 400);
-  aS = createSlider(-1, 1, 0, 0.01);
-  cSlider = createSlider(-165, 165, 0, 0.01);
-  bSlider = createSlider(-155, 155, 0, 0.01);
+  aSlider = createSlider(-1, 1, 0, 0.001);
+  cSlider = createSlider(-165, 165, 0, 0.1);
+  bSlider = createSlider(-155, 155, 0, 0.1);
+  //let estrelas = [400]
+}
+
+function makeCloud(cloudx, cloudy) {
+  fill(250)
+  noStroke();
+  ellipse(cloudx, cloudy, 70, 50);
+  ellipse(cloudx + 10, cloudy + 10, 70, 50);
+  ellipse(cloudx - 20, cloudy + 10, 70, 50);
+}
+
+function explanationParable() {
+  if (isDarkTheme) {
+    background('rgb(27,26,26)');
+    fill(255);
+  } else {
+    background('rgb(255,255,255)');
+    fill('rgb(27,26,26)');
+  }
+  let yV = 4 * aSlider.value() / -(bSlider.value() * bSlider.value() - 4 * aSlider.value() + cSlider.value());
+  let xV = (-bSlider.value()) / 2 * aSlider.value();
+  text(`EXPLICAÇÃO`, 145, 50);
+  text(`A parábola é uma curva plana, onde o conjunto dos pontos-`, 4, 100);
+  text(`são equidistantes de um ponto dado.`, 4, 115);
+  
+  text(`INFORMAÇÕES SOBRE A PARABOLA GERADA: `, 4, 150);
+  
+  text(`A: ${aSlider.value()}`, 4, 170);
+  text(`B: ${bSlider.value()}`, 4, 190);
+  text(`C: ${cSlider.value()}`, 4, 210);
+  text(`Vértice X: ${xV > 0 ? 'positivo' : 'negativo'}, Vértice Y: ${yV > 0 ? 'positivo' : 'negativo'}`, 4, 240);
+  
+  text(`"Boca" ${aSlider.value() > 0 ? 'pra cima' : 'pra baixo'} `, 4, 270);
 }
 
 function draw() {
-  background("white");
-  
-  //sliders
-  let c = cSlider.value();
-  let b = bSlider.value();
-  
-  //textos dos sliders
-  texto = createP("Largura");
-  texto.style("color", "#9C6FEB");
-  texto.position(45, 405);
-  texto = createP("Vertical");
-  texto.style("color", "#9C6FEB");
-  texto.position(175, 405);
-  texto = createP("Horizontal");
-  texto.style("color", "#9C6FEB");
-  texto.position(300, 405);
+  if (isDarkTheme) {
+    background('rgb(27,26,26)');
+    stroke(255);
+  } else {
+    if(!fogueteFinalizado) {
+      background(135,206,235)
+    } else {
+      background('rgb(152, 221, 243)');
+    }
+  }
 
-  //calcula as coordenadas x e y da parábola com base no coeficiente a
-  strokeWeight(2);
-  stroke("purple")
-  beginShape();
-  for (let x = -200; x <= 200; x++) {
-    let y = aS.value() * (x - b) * (x - b) + c;
-    vertex(x + 200, 400 - y - 200);
-  }
-  endShape();
-  
-  //eixo das abscissas - x
-  strokeWeight(1);
-  stroke("black");
-  line(0, 200, 380, 200);
-  fill("black");
-  triangle(380, 193, 380, 207, 395, 200);
-  textSize(18);
-  text("x", 385, 220)
-  textSize(15);
-  
-  strokeWeight(0);
-  
-  let aumentarValorX = 0;
-  for(let i = -5; i < 6; i++) {
-    text(i, 35 + aumentarValorX, 225)
-      
-    if(i == 0) {
-          aumentarValorX += 45; 
-        }
-      
-    else{
-         aumentarValorX += 30;
-      }
-  }
-  strokeWeight(1);
-  
-  //x negativo
-  for(let xn = 165; xn >= 45; xn -= 30){
-    line(xn, 195, xn, 205);
-  } 
-  
-  //x positivo
-  for(let xp = 235; xp <= 355; xp += 30){
-    line(xp, 195, xp, 205);
-  }
-  
-
-  //eixo das ordenadas - y
-  line(200, 20, 200, 400);
-  triangle(193, 20, 207, 20, 200, 5);
-  textSize(18);
-  text("y", 215, 25);
-  
-  strokeWeight(0);
-  textSize(15);
-  
-  let aumentarValorY = 0;
-  for(let i = 5; i > -6; i--) {
+  if (fogueteFinalizado == false) {
     
-    if(i == 0) {
-      aumentarValorY += 50; 
-      
-    } else if(i > 0) {
-        textSize(15);
-        text(i, 180 , 40 + aumentarValorY)
-        aumentarValorY += 30;
-        }
-        
-      else {
-        textSize(15);
-        text(i, 175 , 50 + aumentarValorY)
-        aumentarValorY += 30;
+    // desenhando as estrelas
+    if (isDarkTheme) {
+        for (let i = 0; i < 100; i += 10) {
+        let x = random(400);
+        let y = random(400);
+        strokeWeight(2);
+        point(x, y);
       }
-        
+    } else {
+        // desenhando as nuvens
+        makeCloud(cloudx + 200, cloudy - 50);
+        makeCloud(cloudx + 80, cloudy);
+        makeCloud(cloudx - 40, cloudy + 100);
+        makeCloud(cloudx + 110, cloudy + 200);
+        makeCloud(cloudx + 220, cloudy + 240)
+      
+      cloudy+=2;
+    }
+    
+    // desenhando o sol
+    
+    fill("#f4a84d");
+    noStroke()
+    
+    let sun = color(255, 255, 0, 110);
+    
+    sun.setAlpha( 120 * sin(millis() / 1800));
+    fill(sun);
+    circle(200, -220, 600);
+    
+    sun.setAlpha(118 + 108)
+    fill(255, 100, 0, 100);
+    circle(200, -180, 500);
+    
+    fill(255, 255, 0, 120);
+    circle(200, -180, 400);
+    
+    circle(200, -160, 400);
+    
+    // atualiza a posição horizontal e vertical do foguete
+    xPos += xVel;
+    yPos += yVel;
+    yVel += gravidade;
+
+    // desenhando foguete
+    // fogo
+    noStroke();
+    fill("#b45237");
+    ellipse(xPos + 200, yPos + random(35, 55), 13, 40);
+    fill("#f4a84d");
+    ellipse(xPos + 200, yPos + random(35, 50), 10, 27);
+
+    // cauda atrás
+    fill("#E01616");
+    arc(xPos + 200, yPos + 36, 27, 27, PI, 0, CHORD);
+
+    // corpo
+    fill("#327EB6");
+    ellipse(xPos + 200, yPos, 20, 53);
+
+    // janelas
+    fill("#FFFFF");
+    ellipse(xPos + 200, yPos - 12, 10, 10);
+    fill("#FFFFF");
+    ellipse(xPos + 200, yPos, 10, 10);
+
+    // cauda frente
+    fill("#E01616");
+    ellipse(xPos + 200, yPos + 32, 3, 20);
+
+    // verifica se o foguete terminou de se mover
+    if (xPos >= 400) {
+      fogueteFinalizado = true;
+    }
+  } else {
+    if(explanation) {
+      explanationParable();
+    } else {
+      // sliders
+    let a = aSlider.value();
+    let c = cSlider.value();
+    let b = bSlider.value();
+
+    // calcula as coordenadas x e y da parábola
+    strokeWeight(2);
+    if (isDarkTheme) {
+      stroke("#327EB6");
+      fill('rgb(27,26,26)');
+    } else {
+      stroke("#CD17FB");
+      fill('#98DDF3');
+    }
+    beginShape();
+    for (let x = -200; x <= 200; x++) {
+      let y = a * (x - b) * (x - b) + c;
+      vertex(x + 200, 400 - y - 200);
+    }
+    endShape();
+
+    // eixo das abscissas - x
+    strokeWeight(1);
+    if (isDarkTheme) {
+      fill(255);
+      stroke(255);
+      text(`a: ${aSlider.value()}, b: ${bSlider.value()}, c: ${cSlider.value()}`, 215, 370);
+       text(`Aperte E para ver detalhes!`, 210, 390);  
+    } else {
+      fill(0);
+      stroke(0);
+      text(`a: ${aSlider.value()}, b: ${bSlider.value()}, c: ${cSlider.value()}`, 215, 370);  
+       text(`Aperte E para ver detalhes!`, 210, 390);  
+    }
+    line(0, 200, 380, 200);
+    triangle(380, 193, 380, 207, 395, 200);
+    textSize(18);
+    if (isDarkTheme) {
+      fill(255); 
+      strokeWeight(0);
+    } else {
+      fill(0);
+    }
+    text("x", 385, 220);
+    textSize(15);
+
+    strokeWeight(0);
+
+    let aumentarValorX = 0;
+    for (let i = -5; i < 6; i++) {
+      text(i, 35 + aumentarValorX, 225);
+
+      if (i == 0) {
+        aumentarValorX += 45;
+      } else {
+        aumentarValorX += 30;
+      }
+    }
+    strokeWeight(1);
+
+    // x negativo
+    for (let xn = 165; xn >= 45; xn -= 30) {
+      line(xn, 195, xn, 205);
     }
 
-  strokeWeight(1);
-  
-  //y negativo
-  for(let yn = 245; yn <= 365; yn += 30){
-    line(195, yn, 205, yn);
+    // x positivo
+    for (let xp = 235; xp <= 355; xp += 30) {
+      line(xp, 195, xp, 205);
+    }
+
+    // eixo das ordenadas - y
+    line(200, 20, 200, 400);
+    triangle(193, 20, 207, 20, 200, 5);
+    textSize(18);
+    if (isDarkTheme) {
+      fill(255); 
+      strokeWeight(0);
+    } else {
+      fill(0); 
+    }
+    text("y", 215, 25);
+    strokeWeight(0);
+    textSize(15);
+
+    let aumentarValorY = 0;
+    for(let i = 5; i > -6; i--) {
+      if(i == 0) {
+        aumentarValorY += 50; 
+      } else if(i > 0) {
+        textSize(15);
+        text(i, 180 , 40 + aumentarValorY);
+        aumentarValorY += 30;
+      } else {
+        textSize(15);
+        text(i, 175 , 50 + aumentarValorY);
+        aumentarValorY += 30;
+      }
+    }
+
+    strokeWeight(1);
+
+    // y negativo
+    for(let yn = 245; yn <= 365; yn += 30){
+      line(195, yn, 205, yn);
+    }
+    //y positivo
+    for(let yp = 155; yp >= 35; yp -= 30){
+      line(195, yp, 205, yp);
+    }
+    fill("transparent");
+    }
   }
-  //y positivo
-  for(let yp = 155; yp >= 35; yp -= 30){
-    line(195, yp, 205, yp);
-  }
-  fill("transparent");
 }
+
+function keyPressed() {
+  if(fogueteFinalizado) {
+    if(key === 'e' || key === 'E') {
+      explanation = !explanation; // Alternar entre o plano cartesiano e a explicação
+    }
+  }
+  if (key === 'd' || key === 'D') {
+    isDarkTheme = !isDarkTheme; // Alternar entre claro e escuro
+  }
+}
+
+ 
