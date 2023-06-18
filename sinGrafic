@@ -1,0 +1,33 @@
+let angulos = [];
+let velocidade = [];
+var raio = 16;
+
+function setup() {
+  createCanvas(600, 400);
+  
+  let total = 600 / (raio* 2); //18,75
+  
+  for (let i = 0; i < total; i++) {
+    angulos[i] = 0; //preenche o array de angulos com 0;
+    velocidade[i] = 0.01 + i / 100; //adiciona variação no [] de     velocidade, ex: 240 (i) + 0.01 / 100;
+  }
+}
+
+function draw() {
+  background(0);
+  translate(300, 200); //"ajeita" a animação para o centro
+  
+  for (let i = 0; i < angulos.length; i++) {
+    fill('purple'); //cor da bolinha
+    stroke('cyan'); //cor do traço
+    strokeWeight(4); //grossura do traço
+    
+    let x = map(i, 0, angulos.length, -300, 300); //map dos angulos enquanto i < tamanho do array "angulos"
+    let y = map(sin(angulos[i]), -1, 1, -200, 200); //map dos angulos enquanto seno do angulo atual < 1 (começando em -1)
+    
+    line(x, 0, x, y); //cria e varia a posição da linha amarela
+    circle(x, y, raio * 2); //cria e varia a posição do circulo
+    
+    angulos[i] += velocidade[i]; //pega o indice do angulos e adiciona a velocidade do indice (i) atual, ex: angulos[0] = angulos[0] + velocidade[0]
+  }
+}
